@@ -58,7 +58,7 @@ class _InstagramApiState extends State<InstagramApi> {
     return Scaffold(
       // backgroundColor: Theme.of(context).hoverColor,
         appBar: AppBar(
-          title: Text('Instagram'),
+          title: Text(instagramData['username']),
         ),
         body: !loaded
             ? const Center(child: CircularProgressIndicator())
@@ -89,7 +89,7 @@ class _InstagramApiState extends State<InstagramApi> {
                   ]),
               Padding(
                 padding: const EdgeInsets.only(left: 10,bottom: 5),
-                child: Text(instagramData['username']),
+                child: Text(instagramData['username'],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w500),),
               ),
               Text(instagramData['biography']),
               const Divider(),
