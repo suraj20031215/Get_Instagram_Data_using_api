@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 
 
-class NewsApi extends StatefulWidget {
-  const NewsApi({super.key});
 
+class InstagramApi extends StatefulWidget {
+  final String usern;
+
+  InstagramApi({required this.usern});
 
   @override
-  State<NewsApi> createState() => _NewsApiState();
+  State<InstagramApi> createState() => _InstagramApiState();
 }
 
-class _NewsApiState extends State<NewsApi> {
+class _InstagramApiState extends State<InstagramApi> {
 
 
   Map<String, dynamic> instagramData = {};
@@ -25,7 +26,7 @@ class _NewsApiState extends State<NewsApi> {
       };
 
       http.Response response = await http.get(
-        Uri.parse('https://instagram130.p.rapidapi.com/account-info?username=_ishika_bharti'),
+        Uri.parse('https://instagram130.p.rapidapi.com/account-info?username=${widget.usern}'),
         headers: headers,
       );
 
@@ -38,9 +39,11 @@ class _NewsApiState extends State<NewsApi> {
         print('Failed to fetch data. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error: $e');
+      print('Error ');
     }
   }
+
+
 
   @override
   void initState() {
@@ -58,18 +61,41 @@ class _NewsApiState extends State<NewsApi> {
           title: Text('Instagram'),
         ),
         body: !loaded
-            ? Center(child: CircularProgressIndicator())
-            : ListView.builder(
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading: Image.network(instagramData['profile_pic_url_hd']),
-              title: Text(instagramData['username'] ?? ''),
-              subtitle: Text(instagramData['biography'] ?? ''),
-              trailing: Text(instagramData['edge_follow']['count'].toString(),textScaleFactor: 1.4,),
-            );
-          },
-          itemCount: 1, // Since it's one user data
-        ),
+            ? const Center(child: CircularProgressIndicator())
+            :Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:[Container(
+                      padding: const EdgeInsets.only(left: 10),
+                      width: 100,
+                      height: 100,
+                      child: CircleAvatar(backgroundImage: NetworkImage(instagramData['profile_pic_url']))),
+                    Container(
+                        margin: EdgeInsets.only(left: 20),
+                        child: Text(instagramData['edge_owner_to_timeline_media']['count'].toString(),textScaleFactor: 1.4,)),
+                    Container(
+                        margin: EdgeInsets.only(right: 10),
+                        child: Text(instagramData['edge_followed_by']['count'].toString(),textScaleFactor: 1.4)),
+                    Container(
+                        margin: EdgeInsets.only(right: 20),
+                        child: Text(instagramData['edge_follow']['count'].toString(),textScaleFactor: 1.4)),
+
+
+                  ]),
+              Padding(
+                padding: const EdgeInsets.only(left: 10,bottom: 5),
+                child: Text(instagramData['username']),
+              ),
+              Text(instagramData['biography']),
+              const Divider(),
+            ],
+          ),
+        )
     );
   }
 }
